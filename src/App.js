@@ -1,13 +1,19 @@
 import axios from "axios";
 import { useState } from "react";
 import "./App.css";
+// import { Link } from "react-router-dom";
 // import { useNavigate } from "react-router-dom";
 
 function App() {
   const [inputValue, setInput] = useState("");
+  const [inputCancelValue, setInputCancelValue] = useState("");
   console.log(inputValue);
+  console.log(inputCancelValue);
 
-  async function loginNavigate() {
+  async function loginNavigate(e) {
+    if (e.keyCode === 13) {
+      loginNavigate();
+    }
     const response = await axios.post(
       "https://pisoauat.niyogin.in/gates/1.0/sweeps/fetchUserFromMobile",
       {
@@ -24,21 +30,46 @@ function App() {
         },
       }
     );
-    if (response && response.userId) {
-      await this.$store.dispatch("auth/setUserId", {
-        userId: response.userId,
-        mobile: inputValue,
-      });
-      this.$router.push({ path: "/src/verify" });
-    }
+
     console.log(response);
   }
 
-  // let navigate = useNavigate();
-  // const routeChange = () => {
-  //   let path = `/src/verify.js`;
-  //   navigate(path);
-  // };
+  async function handleCancelCheque() {
+    const res = await axios.post(
+      "https://pisoauat.niyogin.in/gates/1.0/sweeps/uploadDoc",
+      {
+        image: inputCancelValue,
+      },
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        auth: {
+          username: "xSgqh",
+          password: "GKPejXE}c",
+        },
+      }
+    );
+    console.log(res);
+    // extract cheque from cheuque
+    const resC = await axios.post(
+      "https://pisoauat.niyogin.in/gates/1.0/sweeps/extractCheque",
+      {
+        image: inputCancelValue,
+      },
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        auth: {
+          username: "NwdW2",
+          password: "BJYR4z1TW",
+        },
+      }
+    );
+    console.log(res);
+  }
+
   return (
     <div className="App">
       login Page
@@ -52,7 +83,20 @@ function App() {
         value={inputValue}
         onChange={(e) => setInput(e.target.value)}
       />
-      <button onClick={loginNavigate}>Proceed</button>
+      {/* <Link o="/src/verify"></Link> */}
+      <button onClick={loginNavigate} type="submit">
+        Proceed
+      </button>
+      {/* OCR of cancel cheque start */}
+      <input
+        type="file"
+        id="CANCHQ"
+        name="filename"
+        // onChange={handleCancelCheque}
+        value={inputCancelValue}
+        onChange={(e) => setInputCancelValue(e.target.value)}
+      />
+      {/* OCR of cancel cheque end*/}
     </div>
   );
 }
