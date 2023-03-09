@@ -1,23 +1,28 @@
-// Child Component
 import React, { useState } from "react";
 
-function ChildComponent(props) {
-  const [data, setData] = useState("");
+function Child(props) {
+  const [name, setName] = useState();
 
-  const handleChange = (e) => {
-    setData(e.target.value);
-  };
-
-  const handleClick = () => {
-    props.onDataFromChild(data);
-  };
-
+  function handleSubmit(e) {
+    e.preventDefault();
+    props.getData(name);
+  }
   return (
     <div>
-      <input type="text" value={data} onChange={handleChange} />
-      <button onClick={handleClick}>Send data to parent</button>
+      <h1>child</h1>
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          value={name}
+          onChange={(e) => {
+            setName(e.target.value);
+          }}
+        ></input>
+        <button>Submit</button>
+        {/* {props.getData} */}
+      </form>
     </div>
   );
 }
 
-export default ChildComponent;
+export default Child;
